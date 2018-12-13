@@ -1,0 +1,47 @@
+public class ServerResponceFeed {
+
+    public static Boolean writeToSD(Context context, String text) {
+        Boolean write_successful = false;
+        File root = null;
+        try {
+            root = Environment.getExternalStorageDirectory();
+            //check sdcard permission
+            if (root.canWrite()) {
+                File fileDir = new File(root.getAbsolutePath() + "/.travelize");
+                fileDir.mkdirs();
+//                System.out.println("sssssssssssss--------dir----" + fileDir.getAbsolutePath());
+                File file = new File(fileDir, "/responceRecord.txt");
+                System.out.println("sssssssssssss--------com----" + file.getAbsolutePath());
+                if (file.exists()) {
+//                    System.out.println("sssssssssssss--------inside----");
+                    commitToFile(file.getAbsolutePath(), text);
+                    write_successful = true;
+                } else {
+                    FileWriter filewriter = new FileWriter(file);
+                    BufferedWriter out = new BufferedWriter(filewriter);
+                    out.write("------------WELCOME TO TRAVELIZE FEED REPORT------\n");
+                    out.write("----------------------------------------------------");
+                    out.close();
+                    write_successful = true;
+                }
+
+
+            }
+        } catch (IOException e) {
+            Log.e("ERROR:---", "Could not write file to SDCard" + e.getMessage());
+            write_successful = false;
+        }
+        return write_successful;
+    }
+
+    private static void commitToFile(String path, String newString) throws IOException {
+        final String entryString = new String(newString);
+        FileOutputStream fOut = new FileOutputStream(new File(path), true);
+        OutputStreamWriter osw = new OutputStreamWriter(fOut);
+        osw.append("\n\r");
+        osw.write(CommFunc.getTodayDateAndTime() + "---->" + entryString);
+        osw.flush();
+        osw.close();
+    }
+
+}
